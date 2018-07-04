@@ -398,6 +398,7 @@ final class WooCommerce_Germanized {
 				'woocommerce-dynamic-pricing',
 				'woocommerce-product-bundles',
 				'woocommerce-role-based-prices',
+				'woocommerce-wholesale-prices',
 				'woo-paypalplus'
 			)
 		);
@@ -771,7 +772,7 @@ final class WooCommerce_Germanized {
 		if ( isset( $mails[ 'WC_Email_Customer_Processing_Order' ] ) ) {
 			$mails[ 'WC_Email_Customer_Processing_Order' ]->title = __( 'Order Confirmation', 'woocommerce-germanized' );
 		}
-		
+
 		return $mails;
 	}
 
