@@ -420,8 +420,9 @@ final class WooCommerce_Germanized {
 				'woocommerce-role-based-price',
 				'woocommerce-gateway-paypal-express-checkout',
 				'woocommerce-subscriptions',
-				'woo-paypalplus',
-				'dhl-for-woocommerce'
+				'dhl-for-woocommerce',
+				'woocommerce-wholesale-prices',
+				'woo-paypalplus'
 			)
 		);
 
@@ -816,7 +817,7 @@ final class WooCommerce_Germanized {
 				$mails['WC_Email_Customer_On_Hold_Order']       = include 'includes/emails/class-wc-gzd-email-customer-on-hold-order.php';
 			}
 		}
-		
+
 		return $mails;
 	}
 
