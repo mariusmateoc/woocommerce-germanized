@@ -1,10 +1,10 @@
 <?php
 /**
- * WPML Helper
+ * WWP Helper
  *
- * Specific configuration for WPML
+ * Specific configuration for WooCommerce Wholesale Prices
  *
- * @class 		WC_GZD_WPML_Helper
+ * @class 		WC_GZD_WWP_Helper
  * @category	Class
  * @author 		Marius Mateoc
  */
@@ -36,7 +36,8 @@ class WC_GZD_Compatibility_Woocommerce_Wholesale_Prices extends WC_GZD_Compatibi
 		add_action( 'woocommerce_gzd_review_order_before_cart_contents', array( $this, 'set_unit_price_filter' ), 10 );
 
 		// Recalculate unit price before adding order item meta
-		add_filter( 'woocommerce_gzd_order_item_unit_price', array( $this, 'unit_price_order_item' ), 10, 4 );
+        add_filter( 'woocommerce_gzd_order_item_unit_price', array( $this, 'unit_price_order_item' ), 10, 4 );
+
 	}
 
 	public function set_unit_price_product_filter( $html, $product ) {
@@ -53,16 +54,59 @@ class WC_GZD_Compatibility_Woocommerce_Wholesale_Prices extends WC_GZD_Compatibi
 			'price' => $product_price,
 		) );
 
-		return $gzd_product->get_unit_html( false );
+		return $gzd_product->get_unit_html();
 	}
 
 	public function set_unit_price_filter() {
 		add_action( 'woocommerce_gzd_before_get_unit_price', array( $this, 'calculate_unit_price' ), 10, 1 );
 		// Adjust variable from-to unit prices
 		add_action( 'woocommerce_gzd_before_get_variable_variation_unit_price', array( $this, 'calculate_unit_price' ), 10, 1 );
-	}
+    }
 
 	public function calculate_unit_price( $product ) {
-		$product->recalculate_unit_price();
+        // $product->recalculate_unit_price();
+
+        // HACK: Partial implementation work only for one wholsale customer and don't calculate unit price on shop page
+		$business_price = get_post_meta( $product->get_id(), 'wholesale_customer_wholesale_price', true);
+
+        if( is_user_logged_in() ) {
+            $user = wp_get_current_user();
+
+            $roles = ( array ) $user->roles;
+
+            if ( in_array("wholesale_customer", $roles) && $business_price != 0 ) {
+                // $base_country = WC()->countries->get_base_country();
+                // $user_billing_country = WC()->customer->get_billing_country();
+                // $user_shipping_country = WC()->customer->get_shipping_country();
+                // $user_country = $user_shipping_country ?: $user_billing_country;
+
+                // if ($base_country == $user_country) {
+
+                //     if (is_cart() || is_checkout()) {
+                //         // $wholesale_price = (float)$business_price;
+                //         // $price_tax = $product->get_price_including_tax();
+                //         // $product->recalculate_unit_price();
+
+                //     } else {
+
+                //         $wholesale_price = (float)$business_price;
+                //         $product->recalculate_unit_price( array(
+                //             'regular_price' => $wholesale_price,
+                //             'price' => $wholesale_price,
+                //         ) );
+
+                //     }
+                // } else {
+                    $wholesale_price = (float)$business_price;
+
+                    $product->recalculate_unit_price( array(
+                        'regular_price' => $wholesale_price,
+                        'price' => $wholesale_price,
+                    ) );
+                // }
+            }
+        } else {
+			$product->recalculate_unit_price();
+		}
 	}
 }
