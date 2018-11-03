@@ -223,7 +223,7 @@ class WC_GZD_Dependencies {
 	public function compare_versions( $main_ver, $ver2, $operator ) {
 
 		$expl_main_ver = explode( '.', $main_ver );
-		$expl_ver2 = explode( '.', $ver2 );
+		$expl_ver2     = explode( '.', $ver2 );
 
 		// Check if ver2 string is more accurate than main_ver
 		if ( sizeof( $expl_main_ver ) == 2 && sizeof( $expl_ver2 ) > 2 ) {
@@ -255,7 +255,7 @@ class WC_GZD_Dependencies {
 		global $dependencies;
 		$dependencies = $this;
 
-		include_once( 'admin/views/html-notice-dependencies.php' );
+		include_once WC_GERMANIZED_ABSPATH . 'includes/admin/views/html-notice-dependencies.php';
 	}
 
 }

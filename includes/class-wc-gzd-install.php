@@ -130,7 +130,7 @@ class WC_GZD_Install {
 		}
 
 		// Register post types
-		include_once( 'class-wc-gzd-post-types.php' );
+		include_once WC_GERMANIZED_ABSPATH . 'includes/class-wc-gzd-post-types.php';
 		WC_GZD_Post_types::register_taxonomies();
 
 		self::create_cron_jobs();
@@ -167,13 +167,14 @@ class WC_GZD_Install {
 			// Show tour for new installs only
 			update_option( 'woocommerce_gzd_hide_tour', 1 );
 			
-			$major_version = substr( $current_version, 0, 3 );
+			$major_version     = substr( $current_version, 0, 3 );
 			$new_major_version = substr( WC_germanized()->version, 0, 3 );
 
 			// Only on major update
 			if ( version_compare( $new_major_version, $major_version, ">" ) ) {
 				delete_option( '_wc_gzd_hide_theme_notice' );
 				delete_option( '_wc_gzd_hide_pro_notice' );
+				delete_option( '_wc_gzd_hide_review_notice' );
 			}
 
 		} else {
@@ -195,9 +196,6 @@ class WC_GZD_Install {
 
 		// Update activation date
 		update_option( 'woocommerce_gzd_activation_date', date( 'Y-m-d' ) );
-
-		// Add theme compatibility check
-		delete_option( '_wc_gzd_hide_review_notice' );
 
 		// Check if pages are needed
 		if ( wc_get_page_id( 'revocation' ) < 1 ) {
@@ -528,9 +526,9 @@ class WC_GZD_Install {
 	public static function create_options() {
 
 		// Include settings so that we can run through defaults
-		include_once( WC()->plugin_path() . '/includes/admin/settings/class-wc-settings-page.php' );
-		include_once( 'admin/class-wc-gzd-admin-legal-checkboxes.php' );
-		include_once( 'admin/settings/class-wc-gzd-settings-germanized.php' );
+		include_once WC()->plugin_path() . '/includes/admin/settings/class-wc-settings-page.php';
+		include_once WC_GERMANIZED_ABSPATH . 'includes/admin/class-wc-gzd-admin-legal-checkboxes.php';
+		include_once WC_GERMANIZED_ABSPATH . 'includes/admin/settings/class-wc-gzd-settings-germanized.php';
 
 		$settings = new WC_GZD_Settings_Germanized();
 		$options  = apply_filters( 'woocommerce_gzd_installation_default_settings', array_merge( $settings->get_settings(), $settings->get_display_settings(), $settings->get_email_settings() ) );

@@ -21,7 +21,6 @@ class WC_GZD_DHL_Parcel_Shops {
 	}
 
 	public function __construct() {
-
 		$this->address_hooks();
 
 		if ( $this->is_enabled() ) {
@@ -70,7 +69,6 @@ class WC_GZD_DHL_Parcel_Shops {
 	}
 
 	public function get_disabled_shipping_methods() {
-
 		if ( get_option( 'woocommerce_gzd_display_checkout_shipping_rate_select' ) !== 'yes' )
 			return array();
 
@@ -79,8 +77,8 @@ class WC_GZD_DHL_Parcel_Shops {
 
 	public function remove_fields( $fields ) {
 
-		if ( isset( $fields[ 'shipping' ][ 'shipping_parcelshop' ] ) ) {
-			unset( $fields[ 'shipping' ][ 'shipping_parcelshop' ] );
+		if ( isset( $fields['shipping']['shipping_parcelshop'] ) ) {
+			unset( $fields['shipping']['shipping_parcelshop'] );
 		}
 
 		return $fields;
@@ -95,10 +93,9 @@ class WC_GZD_DHL_Parcel_Shops {
 	}
 
 	public function set_address_format( $formats ) {
-
 		foreach( $this->get_supported_countries() as $country ) {
 
-			if ( ! isset( $formats[ $country ] ) )
+			if ( ! array_key_exists( $country, $formats ) )
 				continue;
 
 			$format = $formats[ $country ];
@@ -110,28 +107,28 @@ class WC_GZD_DHL_Parcel_Shops {
 	}
 
 	public function set_formatted_shipping_address( $fields = array(), $order ) {
-		$fields[ 'parcelshop_post_number' ] = '';
+		$fields['parcelshop_post_number'] = '';
 
 		if ( wc_gzd_get_crud_data( $order, 'shipping_parcelshop' ) ) {
-			$fields[ 'parcelshop_post_number' ] = wc_gzd_get_crud_data( $order, 'shipping_parcelshop_post_number' );
+			$fields['parcelshop_post_number'] = wc_gzd_get_crud_data( $order, 'shipping_parcelshop_post_number' );
 		}
 
 		return $fields;
 	}
 
 	public function set_formatted_billing_address( $fields = array(), $order ) {
-		$fields[ 'parcelshop_post_number' ] = '';
+		$fields['parcelshop_post_number'] = '';
 
 		return $fields;
 	}
 
 	public function set_formatted_address( $placeholder, $args ) {
-		if ( isset( $args[ 'parcelshop_post_number' ] ) ) {
-			$placeholder[ '{parcelshop_post_number}' ] = $args[ 'parcelshop_post_number' ];
-			$placeholder[ '{parcelshop_post_number_upper}' ] = strtoupper( $args[ 'parcelshop_post_number' ] );
+		if ( isset( $args['parcelshop_post_number'] ) ) {
+			$placeholder['{parcelshop_post_number}']       = $args['parcelshop_post_number'];
+			$placeholder['{parcelshop_post_number_upper}'] = strtoupper( $args['parcelshop_post_number'] );
 		} else {
-			$placeholder[ '{parcelshop_post_number}' ] = '';
-			$placeholder[ '{parcelshop_post_number_upper}' ] = '';
+			$placeholder['{parcelshop_post_number}']       = '';
+			$placeholder['{parcelshop_post_number_upper}'] = '';
 		}
 		return $placeholder;
 	}
@@ -139,15 +136,14 @@ class WC_GZD_DHL_Parcel_Shops {
 	public function set_user_address( $address, $customer_id, $name ) {
 		if ( 'shipping' === $name ) {
 			if ( get_user_meta( $customer_id, $name . '_parcelshop', true ) ) {
-				$address[ 'parcelshop_post_number' ] = get_user_meta( $customer_id, $name . '_parcelshop_post_number', true );
+				$address['parcelshop_post_number'] = get_user_meta( $customer_id, $name . '_parcelshop_post_number', true );
 			}
 		}
 		return $address;
 	}
 
 	public function init_fields( $fields ) {
-
-		$fields[ 'parcelshop' ] = array(
+		$fields['parcelshop'] = array(
 			'type' 	   => 'checkbox',
 			'required' => false,
 			'label'    => __( 'Send to DHL Parcel Shop?', 'woocommerce-germanized' ),
@@ -155,9 +151,10 @@ class WC_GZD_DHL_Parcel_Shops {
 			'group'    => array( 'shipping' ),
 			'class'    => array( 'form-row-wide', 'first-check' ),
 			'hidden'   => $this->maybe_hide_fields(),
+			'priority' => 50,
 		);
 
-		$fields[ 'parcelshop_post_number' ] = array(
+		$fields['parcelshop_post_number'] = array(
 			'type' 	   => 'text',
 			'required' => true,
 			'label'    => __( 'Postnumber', 'woocommerce-germanized' ),
@@ -165,6 +162,7 @@ class WC_GZD_DHL_Parcel_Shops {
 			'group'    => array( 'shipping' ),
 			'class'    => array( 'form-row-wide' ),
 			'hidden'   => $this->maybe_hide_fields(),
+			'priority' => 60,
 		);
 
 		return $fields;
@@ -175,19 +173,20 @@ class WC_GZD_DHL_Parcel_Shops {
 	}
 
 	public function init_profile_fields( $fields ) {
-
-		$fields[ 'shipping' ][ 'fields' ][ 'shipping_parcelshop' ] = array(
+		$fields['shipping']['fields']['shipping_parcelshop'] = array(
 			'label'       => __( 'DHL Parcel Shop?', 'woocommerce-germanized' ),
 			'type'		  => 'select',
 			'options'     => array( 0 => __( 'No', 'woocommerce-germanized' ), 1 => __( 'Yes', 'woocommerce-germanized' ) ),
 			'description' => __( 'Select whether delivery to parcel shop should be enabled.', 'woocommerce-germanized' ),
 			'class'       => '',
+			'priority'    => 50,
 		);
 
-		$fields[ 'shipping' ][ 'fields' ][ 'shipping_parcelshop_post_number' ] = array(
+		$fields['shipping']['fields']['shipping_parcelshop_post_number'] = array(
 			'label'       => __( 'Postnumber', 'woocommerce-germanized' ),
 			'type'		  => 'text',
 			'description' => __( 'In case delivery to parcel shop is enabled please fill in the corresponding DHL post number.', 'woocommerce-germanized' ),
+			'priority'    => 60,
 		);
 
 		return $fields;
@@ -195,8 +194,7 @@ class WC_GZD_DHL_Parcel_Shops {
 	}
 
 	public function init_admin_fields( $fields ) {
-
-		$fields[ 'parcelshop_post_number' ] = array(
+		$fields['parcelshop_post_number'] = array(
 			'type' 	        => 'text',
 			'label'         => __( 'Postnumber', 'woocommerce-germanized' ),
 			'before'        => 'address_1',
@@ -234,13 +232,19 @@ class WC_GZD_DHL_Parcel_Shops {
 			return $fields;
 		}
 
-		if ( ! isset( $_POST[ 'shipping_parcelshop' ] ) && isset( $fields[ 'shipping_parcelshop_post_number' ] ) ) {
-			$fields[ 'shipping_parcelshop_post_number' ][ 'required' ] = false;
+		if ( ! isset( $_POST['shipping_parcelshop'] ) && isset( $fields['shipping_parcelshop_post_number'] ) ) {
+			$fields['shipping_parcelshop_post_number'][ 'required' ] = false;
 		} else {
-			$fields[ 'shipping_address_1' ][ 'label' ] = __( 'Parcel Shop', 'woocommerce-germanized' );
+			$fields['shipping_address_1']['label'] = __( 'Parcel Shop', 'woocommerce-germanized' );
 		}
 
 		return $fields;
+	}
+
+	public function order_has_parcel_shop_delivery( $order_id ) {
+		$number = get_post_meta( $order_id, '_shipping_parcelshop_post_number', true );
+
+		return ( get_post_meta( $order_id, '_shipping_parcelshop', true ) && ! empty( $number ) ) ? true : false;
 	}
 
 	public function validate_address_fields( $value ) {
@@ -248,8 +252,8 @@ class WC_GZD_DHL_Parcel_Shops {
 		if ( $value && ! empty( $value ) ) {
 			$data = array(
 				'shipping_parcelshop_post_number' => '',
-				'shipping_parcelshop' => '',
-				'shipping_country' => '',
+				'shipping_parcelshop'             => '',
+				'shipping_country'                => '',
 			);
 
 			foreach( $data as $key => $val ) {
@@ -267,11 +271,11 @@ class WC_GZD_DHL_Parcel_Shops {
 	public function manipulate_checkout_fields() {
 		if ( ! WC()->checkout()->get_value( 'shipping_parcelshop' ) ) {
 			$fields = WC()->checkout()->checkout_fields;
-			$fields[ 'shipping' ][ 'shipping_parcelshop_post_number' ][ 'required' ] = false;
+			$fields['shipping']['shipping_parcelshop_post_number']['required'] = false;
 			WC()->checkout()->checkout_fields = $fields;
 		} else {
 			$fields = WC()->checkout()->checkout_fields;
-			$fields[ 'shipping' ][ 'shipping_address_1' ][ 'label' ] = __( 'Parcel Shop', 'wooocommerce-germanized' );
+			$fields['shipping']['shipping_address_1']['label'] = __( 'Parcel Shop', 'wooocommerce-germanized' );
 			WC()->checkout()->checkout_fields = $fields;
 		}
 	}
@@ -344,7 +348,6 @@ class WC_GZD_DHL_Parcel_Shops {
 	}
 
 	public function add_button_markup( $field, $key, $args, $value ) {
-
 		if ( 'shipping_parcelshop' === $key ) {
 			if ( substr( $field, -4 ) === "</p>" ) {
 				$field = substr( $field, 0, -4 );
@@ -356,7 +359,6 @@ class WC_GZD_DHL_Parcel_Shops {
 	}
 
 	public function get_supported_countries( $as_names = false ) {
-
 		$codes = apply_filters( 'woocommerce_gzd_dhl_parcel_shops_countries', (array) get_option( 'woocommerce_gzd_dhl_parcel_shop_supported_countries', array( 'DE', 'AT' ) ) );
 
 		if ( $as_names ) {

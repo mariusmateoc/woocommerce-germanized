@@ -620,7 +620,7 @@ class WC_GZD_Settings_Germanized extends WC_Settings_Page {
 			array(
 				'title' 	=> '',
 				'id' 		=> 'woocommerce_gzdp_enable_vat_check',
-				'img'		=> WC_Germanized()->plugin_url() . '/assets/images/pro/settings-inline-vat.png',
+				'img'		=> WC_Germanized()->plugin_url() . '/assets/images/pro/settings-inline-vat-v2.png',
 				'href'      => 'https://vendidero.de/woocommerce-germanized#vat',
 				'type' 		=> 'image',
 			),
@@ -767,7 +767,7 @@ class WC_GZD_Settings_Germanized extends WC_Settings_Page {
 		), $product_types );
 
 		$shipping_methods_options = WC_GZD_Admin::instance()->get_shipping_method_instances_options();
-		$payment_gateway_options =  WC_GZD_Admin::instance()->get_payment_gateway_options();
+		$payment_gateway_options  = WC_GZD_Admin::instance()->get_payment_gateway_options();
 
 		$settings = array(
 
@@ -925,6 +925,47 @@ class WC_GZD_Settings_Germanized extends WC_Settings_Page {
 				'id' 		=> 'woocommerce_gzd_display_product_detail_sale_price_labels',
 				'default'	=> 'yes',
 				'type' 		=> 'checkbox',
+				'checkboxgroup'	=> 'end',
+			),
+
+			array(
+				'title' 	=> __( 'Within Product Widgets', 'woocommerce-germanized' ),
+				'desc' 		=> __( 'Shipping Costs notice', 'woocommerce-germanized' ),
+				'id' 		=> 'woocommerce_gzd_display_product_widget_shipping_costs',
+				'type' 		=> 'checkbox',
+				'default'	=> 'yes',
+				'checkboxgroup'	=> 'start',
+			),
+
+			array(
+				'desc' 		=> __( 'Tax Info', 'woocommerce-germanized' ),
+				'id' 		=> 'woocommerce_gzd_display_product_widget_tax_info',
+				'type' 		=> 'checkbox',
+				'default'	=> 'yes',
+				'checkboxgroup'		=> '',
+			),
+
+			array(
+				'desc' 		=> __( 'Base Price', 'woocommerce-germanized' ),
+				'id' 		=> 'woocommerce_gzd_display_product_widget_unit_price',
+				'type' 		=> 'checkbox',
+				'default'	=> 'yes',
+				'checkboxgroup'		=> '',
+			),
+
+			array(
+				'desc' 		=> __( 'Product Units', 'woocommerce-germanized' ),
+				'id' 		=> 'woocommerce_gzd_display_product_widget_product_units',
+				'type' 		=> 'checkbox',
+				'default'	=> 'no',
+				'checkboxgroup'		=> '',
+			),
+
+			array(
+				'desc' 		=> __( 'Delivery Time Notice', 'woocommerce-germanized' ),
+				'id' 		=> 'woocommerce_gzd_display_product_widget_delivery_time',
+				'type' 		=> 'checkbox',
+				'default'	=> 'yes',
 				'checkboxgroup'	=> 'end',
 			),
 
@@ -1156,6 +1197,8 @@ class WC_GZD_Settings_Germanized extends WC_Settings_Page {
 			foreach ( $this->get_sections() as $section => $name ) {
 				if ( $section === $current_section ) {
 					$settings = apply_filters( 'woocommerce_gzd_get_settings_' . $section, $this->get_settings() );
+					$settings = apply_filters( 'woocommerce_gzd_get_settings_filter', $settings );
+
 					$sidebar = apply_filters( 'woocommerce_gzd_get_sidebar_' . $section, $sidebar );
 				}
 			}
@@ -1164,14 +1207,14 @@ class WC_GZD_Settings_Germanized extends WC_Settings_Page {
 		do_action( 'woocommerce_gzd_before_section_output', $current_section );
 
 		if ( apply_filters( 'woocommerce_gzd_settings_section_include_path', true, $current_section ) ) {
-			$path = apply_filters( 'woocommerce_gzd_settings_section_html_path', WC_Germanized()->plugin_path() . '/includes/admin/views/html-settings-section.php', $current_section );
+			$path = apply_filters( 'woocommerce_gzd_settings_section_html_path', WC_GERMANIZED_ABSPATH . 'includes/admin/views/html-settings-section.php', $current_section );
 			include_once( $path );
         }
 	}
 
 	public function get_sidebar() {
 		ob_start();
-		include_once( WC_Germanized()->plugin_path() . '/includes/admin/views/html-settings-sidebar.php' );
+		include_once WC_GERMANIZED_ABSPATH . 'includes/admin/views/html-settings-sidebar.php';
 		$content = ob_get_clean();
 		return $content;
 	}
@@ -1260,7 +1303,7 @@ class WC_GZD_Settings_Germanized extends WC_Settings_Page {
 			return;
 		$GLOBALS[ 'hide_save_button' ] = true;
 		$section_title = $this->premium_sections[ $current_section ];
-		include_once( WC_Germanized()->plugin_path() . '/includes/admin/views/html-settings-pro.php' );
+		include_once WC_GERMANIZED_ABSPATH . 'includes/admin/views/html-settings-pro.php';
 	}
 
 	public function set_premium_sections( $sections ) {

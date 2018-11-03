@@ -2,10 +2,10 @@
 Contributors: vendidero, vdwoocommercesupport
 Tags: woocommerce, woocommerce german, woocommerce DE, woocommerce germany, woocommerce deutsch, woo
 Requires at least: 3.8
-Tested up to: 4.9
+Tested up to: 5.0
 WC requires at least: 2.4
-WC tested up to: 3.4
-Stable tag: 2.0.4
+WC tested up to: 3.5
+Stable tag: 2.2.4
 Requires PHP: 5.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -47,7 +47,7 @@ Furthermore we customized the WooCommerce checkout to make your store meet the b
 * *PDF Invoices & Packing Slips (Pro)* - Easily create PDF invoices, packing slips and cancellations via your WooCommerce order screen. Optionally generate PDFs automatically based on a certain order status.
 * *Legal PDF attachments (Pro)* - Attach PDFs to certain email templates instead of plain text. Optionally let Germanized generate your PDFs automatically by parsing your page content.
 * *Delayed conclusion of contract (Pro)* - By default a contract is concluded right after submitting the WooCommerce checkout. Germanized offers you to delay that contract and manually check the order before concluding the contract.
-* *VAT ID check for WooCommerce (Pro)* - Provide additional fields within checkout and customer account to automatically validate the VAT ID based on the EU API.
+* *VAT ID check for WooCommerce (Pro)* - Provide additional fields within checkout, customer account and registration form to automatically validate the VAT ID based on the EU API.
 * *Multistep Checkout (Pro)* - Adjusts the default single-page-checkout within WooCommerce to support a multistep checkout without overriding templates for optimal theme support.
 
 = WooCommerce Germanized is certified by Trusted Shops =
@@ -87,6 +87,7 @@ By default, Germanized works with every WooCommerce theme. Some themes may need 
 * Storefront
 * VendiPro
 * Virtue
+* Shopkeeper
 
 == Installation ==
 
@@ -99,9 +100,31 @@ By default, Germanized works with every WooCommerce theme. Some themes may need 
 = Automatic Installation =
 
 We recommend installing WooCommerce Germanized through the WordPress Backend. Please install WooCommerce before installing WC Germanized.
-After the installation you may easily adapt the settings to your own needs. 
+After the installation you may easily adapt the settings to your own needs.
 
-= Shortcodes =
+= Product specific shortcodes =
+You may use one of the following product-specific shortcodes to output notices within PageBuilders or on custom-built-pages.
+The `product` parameter is optional. Shortcodes are falling back to the global $product variable in case the `product` parameter is missing.
+
+`[gzd_product_unit_price product="123"]`
+Outputs unit price for a product.
+
+`[gzd_product_units product="123"]`
+Outputs units included with the product e.g. 100 ml.
+
+`[gzd_product_delivery_time product="123"]`
+Outputs delivery time for a product.
+
+`[gzd_product_tax_notice product="123"]`
+Outputs tax notice for a product.
+
+`[gzd_product_shipping_notice product="123"]`
+Outputs shipping costs notice for a product.
+
+`[gzd_product_cart_desc product="123"]`
+Outputs mini cart description for a product.
+
+= General Shortcodes =
 
 `[revocation_form]`
 Inserts online revocation form within your WooCommerce store. Customer and shop manager receive a confirmation by email.
@@ -160,6 +183,62 @@ Bug reports may be filed via our [GitHub repository](https://github.com/vendider
 4. WooCommerce Multistep Checkout (Pro)
 
 == Changelog ==
+
+= 2.2.4 =
+* Fix: Added priority to checkout fields to avoid undefined index error in Woo 3.5.1
+* Fix: Do not remove default Woo order confirmation hooks if feature is disabled
+* Fix: Order submit nonce naming fallback
+* Improvement: Fee shared tax calculation
+* Improvement: REST API boolean data handling
+* Improvement: New REST API unit tests
+
+= 2.2.3 =
+* Fix: Woo 3.5 translation order processing email replacement
+* Fix: Inline CSS was not applied due to hook priority issues
+* Improvement: Added inline CSS to hide "estimated taxes" notice within cart if option is chosen
+
+= 2.2.2 =
+* Fix: Load WPML Helper settings filter for settings screen only to avoid problems during admin actions
+* Fix: Do not force tax calculation for fees if customer is a vat exempt
+* Improvement: Keep hidden terms checkbox (woo builtin) in sync with GZD checkbox to avoid plugin conflicts
+* Improvement: Use higher priority to refresh order fragments to avoid plugin conflicts
+
+= 2.2.1 =
+* Fix: Make sure that order confirmation email is not being sent twice
+* Improvement: Override on-hold-email to disallow triggering by third party plugins
+* Improvement: Added WPML string translation (>= 2.8.7) option right from the plugin settings (by changing the active language)
+* Improvement: Made notices more defensive. Added option to hide review notice forever
+* Improvement: Added "woocommerce_gzd_add_force_pay_order_parameter" filter to disable the forced redirect
+
+= 2.2.0 =
+* Feature: WooCommerce 3.5 compatibility
+* Feature: Support DHL for WooCommerce parcel delivery checkbox option
+* Feature: Enable tax notices etc. within product widgets
+* Improvement: Explicit option (within e-mail settings) to override order confirmation email text
+* Fix: Adjusted add_to_cart shortcode filter execution
+
+= 2.0.6 =
+* Improvement: Added re-send button for customer activation email within edit profile section (admin UI)
+* Improvement: Better UI while editing variable unit prices. Show errors if parent data is missing
+* Fix: Make sure to include nonce within checkout if payment wrapper is not refreshed during AJAX request
+* Fix: Free shipping auto select check after adding to cart
+
+= 2.0.5 =
+* Feature: Support WC Role Based Price (https://de.wordpress.org/plugins/woocommerce-role-based-price/)
+* Feature: Support WooCommerce Gateway PayPal Express Checkout
+* Feature: Added new Shortcodes to better support Pagebuilders (see https://wordpress.org/plugins/woocommerce-germanized/#installation)
+* Feature: Added WooCommerce Subscriptions unit price compatiblity
+* Improvement: Better dynamic pricing plugin compatibility
+* Improvement: Added better PolyLang checkbox translation compatibility
+* Improvement: Check if gateway requires user input before forcing to redirect pay order
+* Improvement: Adjusted shipping cost split tax calculation to exclude non-taxable and zero-rate items
+* Improvement: Re-added order again button which now redirects back to the cart instead of placing the order directly
+* Fix: Possible ArgumentCountError within pre_get_option filter
+* Fix: Avoid loading frontend specific functions within admin
+* Fix: SEPA checkbox validation with force pay order script
+* Fix: Use role__in query argument to ensure multiple roles can be queries for DOI
+* Fix: eKomi review reminder support WC_DateTime
+* Fix: Parcel delivery post number address display
 
 = 2.0.4 =
 * Fix: Legal checkboxes Woo 2.4 support

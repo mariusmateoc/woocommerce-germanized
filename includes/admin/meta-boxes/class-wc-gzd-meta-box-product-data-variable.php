@@ -28,7 +28,6 @@ class WC_Germanized_Meta_Box_Product_Data_Variable {
 	}
 
 	private function __construct() {
-
 		if ( is_admin() ) {
 			add_action( 'woocommerce_product_after_variable_attributes', array( __CLASS__, 'output' ), 20, 3 );
 			add_action( 'woocommerce_save_product_variation', array( __CLASS__, 'save' ) , 0, 2 );
@@ -63,7 +62,6 @@ class WC_Germanized_Meta_Box_Product_Data_Variable {
 			'_unit_product' 			=> '',
 			'_unit_price_auto' 			=> '',
 			'_unit_price_regular' 		=> '',
-			'_unit_price_auto' 			=> '',
 			'_unit_price_sale' 			=> '',
 			'_sale_price_label'			=> '',
 			'_sale_price_regular_label' => '',
@@ -131,6 +129,9 @@ class WC_Germanized_Meta_Box_Product_Data_Variable {
 				<label for="variable_unit_price_sale"><?php echo __( 'Sale Unit Price', 'woocommerce-germanized' ) . ' (' . get_woocommerce_currency_symbol() . ')'; ?></label>
 				<input class="input-text wc_input_price" size="5" type="text" name="variable_unit_price_sale[<?php echo $loop; ?>]" value="<?php echo ( ! empty( $variation_data[ '_unit_price_sale' ] ) ? esc_attr( wc_format_localized_price( $variation_data[ '_unit_price_sale' ] ) ) : '' );?>" placeholder="" />
 			</p>
+            <p class="form-row form-row-first wc-gzd-unit-price-disabled-notice notice notice-warning">
+				<?php printf( __( 'To enable unit prices on variation level please choose a unit and base price units within %s.', 'woocommerce-germanized' ), '<a href="#general_product_data" class="wc-gzd-general-product-data-tab">' . __( 'general product data', 'woocommerce-germanized' ) . '</a>' ); ?>
+            </p>
 		</div>
 		<div class="variable_shipping_time hide_if_variation_virtual">
 			<p class="form-row form-row-first">
@@ -175,32 +176,29 @@ class WC_Germanized_Meta_Box_Product_Data_Variable {
 		);
 
 		foreach ( $data as $k => $v ) {
-			
 			$data_k = 'variable' . ( substr( $k, 0, 1) === '_' ? '' : '_' ) . $k;
 			$data[ $k ] = ( isset( $_POST[ $data_k ][$i] ) ? $_POST[ $data_k ][$i] : null );
-
 		}
 
-		$product = wc_get_product( $variation_id );
+		$product        = wc_get_product( $variation_id );
 		$product_parent = wc_get_product( wc_gzd_get_crud_data( $product, 'parent' ) );
 
 		// Check if parent has unit_base + unit otherwise ignore data
-		if ( empty( $data[ '_parent_unit' ] ) || empty( $data[ '_parent_unit_base' ] ) ) {
-
-			$data[ '_unit_price_auto' ] = '';
-			$data[ '_unit_price_regular' ] = '';
-			$data[ '_unit_price_sale' ] = '';
+		if ( empty( $data['_parent_unit'] ) || empty( $data['_parent_unit_base'] ) ) {
+			$data['_unit_price_auto']    = '';
+			$data['_unit_price_regular'] = '';
+			$data['_unit_price_sale']    = '';
 		}
 
 		// If parent has no unit, delete unit_product as well
-		if ( empty( $data[ '_parent_unit' ] ) ) {
-			$data[ '_unit_product' ] = '';
+		if ( empty( $data['_parent_unit'] ) ) {
+			$data['_unit_product'] = '';
 		}
 
-		$data[ 'product-type' ] = $product_parent->get_type();
-		$data[ '_sale_price_dates_from' ] = $_POST['variable_sale_price_dates_from'][$i];
-		$data[ '_sale_price_dates_to' ] = $_POST['variable_sale_price_dates_to'][$i];
-		$data[ '_sale_price' ] = $_POST['variable_sale_price'][$i];
+		$data['product-type']           = $product_parent->get_type();
+		$data['_sale_price_dates_from'] = $_POST['variable_sale_price_dates_from'][$i];
+		$data['_sale_price_dates_to']   = $_POST['variable_sale_price_dates_to'][$i];
+		$data['_sale_price']            = $_POST['variable_sale_price'][$i];
 
 		$product = WC_Germanized_Meta_Box_Product_Data::save_product_data( $product, $data, true );
 	}

@@ -25,8 +25,8 @@ class WC_GZD_Product {
 		'unit_price_regular' 		=> '',
 		'unit_price_sale' 	 		=> '',
 		'unit_price_auto'	 	   	=> '',
-		'mini_desc' 		 		=> '',
 		'service'					=> '',
+		'mini_desc'                 => '',
 		'gzd_product' 		 		=> NULL,
 	);
 
@@ -69,30 +69,31 @@ class WC_GZD_Product {
 			
 			$value = wc_gzd_get_crud_data( $this->child, $key );
 
-			if ( '' === $value )
+			if ( '' === $value ) {
 				$value = $this->gzd_variation_level_meta[ $key ];
+			}
 		
 		} elseif ( $this->child->is_type( 'variation' ) && in_array( $key, $this->gzd_variation_inherited_meta_data ) ) {
-			
+
 			$value = wc_gzd_get_crud_data( $this->child, $key ) ? wc_gzd_get_crud_data( $this->child, $key ) : '';
 
 			// Handle meta data keys which can be empty at variation level to cause inheritance
 			if ( ! $value || '' === $value ) {
-
 				$parent = wc_get_product( wc_gzd_get_crud_data( $this->child, 'parent' ) );
+
 				// Check if parent exists
-				if ( $parent )
+				if ( $parent ) {
 					$value = wc_gzd_get_crud_data( $parent, $key );
+				}
 			}
 		
 		} elseif ( $key == 'delivery_time' ) {
-			
 			$value = $this->get_delivery_time();
-		
 		} else {
 			
-			if ( strpos( '_', $key ) !== true )
+			if ( strpos( '_', $key ) !== true ) {
 				$key = '_' . $key;
+			}
 
 			$value = wc_gzd_get_crud_data( $this->child, $key );
 		}
@@ -298,6 +299,10 @@ class WC_GZD_Product {
 		return ( $this->unit_base ) ? ( $this->unit_base != apply_filters( 'woocommerce_gzd_unit_base_hide_amount', 1 ) ? '<span class="unit-base">' . $this->unit_base . '</span>' . apply_filters( 'wc_gzd_unit_price_base_seperator', ' ' ) : '' ) . '<span class="unit">' . $this->get_unit() . '</span>' : '';
 	}
 
+	public function get_unit_base_raw() {
+		return $this->unit_base;
+	}
+
 	public function get_unit_term() {
 		$unit = $this->unit;
 
@@ -402,6 +407,7 @@ class WC_GZD_Product {
 		do_action( 'woocommerce_gzd_before_get_unit_price', $this, $price, $qty );
 
 		$tax_display_mode = get_option( 'woocommerce_tax_display_shop' );
+
 		return ( $tax_display_mode == 'incl' ) ? $this->get_unit_price_including_tax( $qty, $price ) : $this->get_unit_price_excluding_tax( $qty, $price );
 	}
 
@@ -454,9 +460,9 @@ class WC_GZD_Product {
 
 			do_action( 'woocommerce_gzd_before_get_unit_price_html', $this );
 
-			$display_price = $this->get_unit_price();
+			$display_price         = $this->get_unit_price();
 			$display_regular_price = $this->get_unit_price( 1, $this->get_unit_regular_price() );
-			$display_sale_price = $this->get_unit_price( 1, $this->get_unit_sale_price() );
+			$display_sale_price    = $this->get_unit_price( 1, $this->get_unit_sale_price() );
 
 			$price_html = ( ( $this->is_on_unit_sale() && $show_sale ) ? $this->get_price_html_from_to( $display_regular_price, $display_sale_price, false ) : wc_price( $display_price ) );
 			$text       = get_option( 'woocommerce_gzd_unit_price_text' );
