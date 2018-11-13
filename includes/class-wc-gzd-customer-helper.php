@@ -46,15 +46,15 @@ class WC_GZD_Customer_Helper {
 				// Disable login for unactivated users
 				add_filter( 'wp_authenticate_user', array( $this, 'login_restriction' ) , 10, 2 );
 				// Disable auto login after registration
-				add_filter( 'woocommerce_registration_auth_new_customer', array( $this, 'disable_registration_auto_login' ), 10, 2 );			
+				add_filter( 'woocommerce_registration_auth_new_customer', array( $this, 'disable_registration_auto_login' ), 10, 2 );
 				// Redirect customers that are not logged in to customer account page
-				add_action( 'template_redirect', array( $this, 'disable_checkout' ), 10 );
+				// add_action( 'template_redirect', array( $this, 'disable_checkout' ), 10 );
 				// Show notices on customer account page
-				add_action( 'template_redirect', array( $this, 'show_disabled_checkout_notice' ), 20 );
+				// add_action( 'template_redirect', array( $this, 'show_disabled_checkout_notice' ), 20 );
 				// Redirect customers to checkout after login
-				add_filter( 'woocommerce_login_redirect', array( $this, 'login_redirect' ), 10, 2 );
+				// add_filter( 'woocommerce_login_redirect', array( $this, 'login_redirect' ), 10, 2 );
 				// Disable customer signup if customer has forced guest checkout
-				add_action( 'woocommerce_checkout_init', array( $this, 'disable_signup' ), 10, 1 );
+				// add_action( 'woocommerce_checkout_init', array( $this, 'disable_signup' ), 10, 1 );
 				// Remove the checkout signup cookie if customer logs out
 				add_action( 'wp_logout', array( $this, 'delete_checkout_signup_cookie' ) );
 				// WC Social Login comp
@@ -171,9 +171,9 @@ class WC_GZD_Customer_Helper {
 			WC()->session->set( 'disable_checkout_signup', true );
 
 		} elseif ( ! WC()->session->get( 'disable_checkout_signup' ) ) {
-			
+
 			if ( is_checkout() && ( ! is_user_logged_in() || ( $this->enable_double_opt_in_for_user() && ! wc_gzd_is_customer_activated() ) ) ) {
-				
+
 				WC()->session->set( 'login_redirect', 'checkout' );
 				wp_safe_redirect( wc_gzd_get_page_permalink( 'myaccount' ) );
 				exit;
@@ -308,7 +308,7 @@ class WC_GZD_Customer_Helper {
 	 * Check for customer that didn't activate their accounts within a couple of time and delete them
 	 */
 	public function account_cleanup() {
-		
+
 		if ( ! get_option( 'woocommerce_gzd_customer_cleanup_interval' ) || get_option( 'woocommerce_gzd_customer_cleanup_interval' ) == 0 )
 			return;
 
@@ -343,14 +343,14 @@ class WC_GZD_Customer_Helper {
 
 	/**
 	 * Activate customer account based on activation code
-	 *  
+	 *
 	 * @param  string $activation_code hashed activation code
 	 * @return boolean|WP_Error
 	 */
 	public function customer_account_activate( $activation_code, $login = false ) {
 		$roles = array_map( 'ucfirst', $this->get_double_opt_in_user_roles() );
 
-		$user_query = new WP_User_Query( apply_filters( 'woocommerce_gzd_customer_account_activation_query', array( 
+		$user_query = new WP_User_Query( apply_filters( 'woocommerce_gzd_customer_account_activation_query', array(
 			'role__in'   => $roles,
 			'number'     => 1,
 			'meta_query' => array(
@@ -370,7 +370,7 @@ class WC_GZD_Customer_Helper {
 		 * @param int $expiration The expiration time in seconds.
 		 */
 		$expiration_duration = apply_filters( 'woocommerce_germanized_account_activation_expiration', DAY_IN_SECONDS );
-		
+
 		if ( ! empty( $user_query->results ) ) {
 
 			foreach ( $user_query->results as $user ) {
